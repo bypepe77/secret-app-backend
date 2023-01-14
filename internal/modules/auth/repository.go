@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"errors"
+
 	"github.com/bypepe77/secret-app-backend/internal/models"
 	"gorm.io/gorm"
 )
@@ -8,6 +10,7 @@ import (
 type UserRepositoryInterface interface {
 	Exists(username string) (bool, error)
 	Create(payload *UserPayload) (models.User, error)
+	GetByUsername(username string) (*models.User, error)
 }
 
 type userRepository struct {
@@ -42,4 +45,15 @@ func (repository *userRepository) Exists(username string) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+func (repository *userRepository) GetByUsername(username string) (*models.User, error) {
+	var user models.User
+	if err := repository.DB.Where("username = ?", username).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errors.New("Usern not found")
+		}
+		return nil, err
+	}
+	return &user, nil
 }

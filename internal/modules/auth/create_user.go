@@ -24,6 +24,7 @@ func (ctrl *authController) Register(c *gin.Context) {
 
 	if payload.Email == "" || payload.Username == "" || payload.Password == "" {
 		utils.SendErrorResponse(c, errorIncorrectData)
+		return
 	}
 
 	ifExistUser, err := ctrl.repository.Exists(payload.Username)

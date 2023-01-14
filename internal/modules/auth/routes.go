@@ -21,4 +21,5 @@ func NewUserRoute(db *gorm.DB, r gin.RouterGroup) *UserRoute {
 
 func (routeController *UserRoute) RegisterUserRoutes() {
 	routeController.routeGroup.POST("/register", routeController.ctrl.Register)
+	routeController.routeGroup.POST("/login", routeController.ctrl.Login)
 }
