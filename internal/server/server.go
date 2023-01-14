@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/bypepe77/secret-app-backend/internal/modules/auth"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -47,6 +48,10 @@ func (s *server) Run() error {
 
 func (s *server) registerRoutes() {
 	s.engine.GET("/", healthCheck)
+
+	// Register auth routes
+	authRoutes := auth.NewUserRoute(s.db, *s.engine.Group("/auth"))
+	authRoutes.RegisterUserRoutes()
 }
 
 func healthCheck(c *gin.Context) {
