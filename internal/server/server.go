@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/bypepe77/secret-app-backend/internal/middlewares"
 	"github.com/bypepe77/secret-app-backend/internal/modules/auth"
+	"github.com/bypepe77/secret-app-backend/internal/modules/secret"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -52,6 +54,9 @@ func (s *server) registerRoutes() {
 	// Register auth routes
 	authRoutes := auth.NewUserRoute(s.db, *s.engine.Group("/auth"))
 	authRoutes.RegisterUserRoutes()
+	// Confesion routes
+	confesionRoutes := secret.NewSecretRoute(s.db, *s.engine.Group("/secret", middlewares.Authorize()))
+	confesionRoutes.RegisterSecretRoutes()
 }
 
 func healthCheck(c *gin.Context) {
