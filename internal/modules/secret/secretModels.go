@@ -13,6 +13,7 @@ type Secret struct {
 	IsDestroyed bool     `json:"is_destroyed"`
 	Categories  []string `json:"categories"`
 	User        *User    `json:"user"`
+	LikesCount  int32    `json:"likes_count"`
 }
 
 type User struct {

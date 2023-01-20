@@ -7,10 +7,7 @@ func toSecretResponse(secret *models.Confession) *Secret {
 		Content:     secret.Content,
 		IsDestroyed: secret.IsDestroyed,
 		Categories:  toCategory(secret.Categories),
-		User: &User{
-			ID:       secret.UserID,
-			Username: secret.User.Username,
-		},
+		LikesCount:  secret.LikesCount,
 	}
 }
 
@@ -22,10 +19,7 @@ func toSecretResponseArray(secrets []*models.Confession) []*Secret {
 			Content:     secret.Content,
 			IsDestroyed: secret.IsDestroyed,
 			Categories:  toCategory(secret.Categories),
-			User: &User{
-				ID:       secret.UserID,
-				Username: secret.User.Username,
-			},
+			LikesCount:  secret.LikesCount,
 		}
 		secretsResponse = append(secretsResponse, secretStruct)
 	}

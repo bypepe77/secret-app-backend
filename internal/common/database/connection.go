@@ -16,7 +16,7 @@ func DatabaseConnectionEnt() *gorm.DB {
 	if err != nil {
 		fmt.Println("err", err)
 	}
-	db.AutoMigrate(&models.User{}, &models.Confession{}, &models.Category{})
+	db.AutoMigrate(&models.User{}, &models.Confession{}, &models.Category{}, &models.Like{})
 
 	return db
 }

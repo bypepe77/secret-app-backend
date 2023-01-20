@@ -7,12 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type SecretRepositoryInterface interface {
-	Create(p *SecretPayload) (*models.Confession, error)
-	GetByIDWithUser(id int) (*models.Confession, error)
-	GetMySecrets(userID int, pagination *Pagination) ([]*models.Confession, error)
-}
-
 type secretRepository struct {
 	DB *gorm.DB
 }
@@ -43,7 +37,7 @@ func (r *secretRepository) Create(p *SecretPayload) (*models.Confession, error) 
 
 func (repository *secretRepository) GetByIDWithUser(id int) (*models.Confession, error) {
 	var confession models.Confession
-	if err := repository.DB.Preload("User").Preload("Categories").First(&confession, id).Error; err != nil {
+	if err := repository.DB.Preload("User").Preload("Categories").Preload("LikesList").First(&confession, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, errors.New("secret not found")
 		}
@@ -66,4 +60,36 @@ func (repository *secretRepository) GetMySecrets(userID int, pagination *Paginat
 		return nil, err
 	}
 	return confessions, nil
+}
+
+func (repository *secretRepository) HasLiked(confessionID int, userID int) (bool, error) {
+	var like *models.Like
+	err := repository.DB.Where("confession_id = ? AND user_id = ?", confessionID, userID).First(&like).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}
+
+func (repository *secretRepository) AddLikeToConfession(confessionID int, userID int) error {
+	// Find the confession
+	var confession models.Confession
+	if err := repository.DB.First(&confession, confessionID).Error; err != nil {
+		return err
+	}
+	// Create a new like
+	newLike := &models.Like{
+		ConfessionID: confessionID,
+		UserID:       userID,
+	}
+	// Append the new like to the confession
+	confession.LikesList = append(confession.LikesList, newLike)
+	// Increase the likes count
+	confession.LikesCount = confession.LikesCount + 1
+	// Save the confession
+	repository.DB.Save(&confession)
+	return nil
 }
