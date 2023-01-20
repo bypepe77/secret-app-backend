@@ -14,6 +14,24 @@ func toSecretResponse(secret *models.Confession) *Secret {
 	}
 }
 
+func toSecretResponseArray(secrets []*models.Confession) []*Secret {
+	var secretsResponse []*Secret
+
+	for _, secret := range secrets {
+		secretStruct := &Secret{
+			Content:     secret.Content,
+			IsDestroyed: secret.IsDestroyed,
+			Categories:  toCategory(secret.Categories),
+			User: &User{
+				ID:       secret.UserID,
+				Username: secret.User.Username,
+			},
+		}
+		secretsResponse = append(secretsResponse, secretStruct)
+	}
+	return secretsResponse
+}
+
 func toCategory(categories []*models.Category) []string {
 	var categoriesParsed []string
 	for _, category := range categories {

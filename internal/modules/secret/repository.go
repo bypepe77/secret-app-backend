@@ -10,6 +10,7 @@ import (
 type SecretRepositoryInterface interface {
 	Create(p *SecretPayload) (*models.Confession, error)
 	GetByIDWithUser(id int) (*models.Confession, error)
+	GetMySecrets(userID int, pagination *Pagination) ([]*models.Confession, error)
 }
 
 type secretRepository struct {
@@ -49,4 +50,20 @@ func (repository *secretRepository) GetByIDWithUser(id int) (*models.Confession,
 		return nil, err
 	}
 	return &confession, nil
+}
+
+func (repository *secretRepository) GetMySecrets(userID int, pagination *Pagination) ([]*models.Confession, error) {
+	var confessions []*models.Confession
+	if err := repository.DB.Preload("User").
+		Preload("Categories").
+		Where("user_id = ?", userID).
+		Limit(pagination.Limit).
+		Offset(pagination.Offset).
+		Find(&confessions).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errors.New("secrets not found")
+		}
+		return nil, err
+	}
+	return confessions, nil
 }

@@ -22,4 +22,5 @@ func NewSecretRoute(db *gorm.DB, r gin.RouterGroup) *SecretRoute {
 func (routeController *SecretRoute) RegisterSecretRoutes() {
 	routeController.routeGroup.POST("/new", routeController.ctrl.Create)
 	routeController.routeGroup.GET("/get/:SecretID", routeController.ctrl.GetOne)
+	routeController.routeGroup.GET("/get/mySecrets", routeController.ctrl.GetMySecrets)
 }

@@ -23,3 +23,8 @@ type User struct {
 type Category struct {
 	Name string `json:"name"`
 }
+
+type Pagination struct {
+	Limit  int
+	Offset int
+}
