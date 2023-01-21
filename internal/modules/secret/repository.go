@@ -2,6 +2,7 @@ package secret
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/bypepe77/secret-app-backend/internal/models"
 	"gorm.io/gorm"
@@ -67,8 +68,10 @@ func (repository *secretRepository) HasLiked(confessionID int, userID int) (bool
 	err := repository.DB.Where("confession_id = ? AND user_id = ?", confessionID, userID).First(&like).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
+			fmt.Println("like 2", err)
 			return false, nil
 		}
+		fmt.Println("like 3", err)
 		return false, err
 	}
 	return true, nil
@@ -91,5 +94,19 @@ func (repository *secretRepository) AddLikeToConfession(confessionID int, userID
 	confession.LikesCount = confession.LikesCount + 1
 	// Save the confession
 	repository.DB.Save(&confession)
+	return nil
+}
+
+func (repository *secretRepository) DeleteLikeFromConfession(confessionID int, userID int) error {
+	// Delete the like from the association table
+	result := repository.DB.Where("confession_id = ? AND user_id = ?", confessionID, userID).Delete(&models.Like{})
+	if result.Error != nil {
+		return result.Error
+	}
+	// Update the like count on the confession
+	result = repository.DB.Model(&models.Confession{}).Where("id = ?", confessionID).Update("likes_count", gorm.Expr("likes_count - ?", 1))
+	if result.Error != nil {
+		return result.Error
+	}
 	return nil
 }
