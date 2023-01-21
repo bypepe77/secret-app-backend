@@ -12,6 +12,7 @@ type SecretControllerInterface interface {
 	LikeSecret(c *gin.Context)
 	UnlikeSecret(c *gin.Context)
 	GetSecrets(c *gin.Context)
+	GetSecretsByCategory(c *gin.Context)
 }
 
 type SecretRepositoryInterface interface {
@@ -22,4 +23,5 @@ type SecretRepositoryInterface interface {
 	AddLikeToConfession(confessionID int, userID int) error
 	DeleteLikeFromConfession(confessionID int, userID int) error
 	GetSecrets() ([]*models.Confession, error)
+	GetSecretsByCategory(categoryName string) ([]*models.Confession, error)
 }

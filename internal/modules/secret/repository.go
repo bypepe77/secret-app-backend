@@ -126,3 +126,23 @@ func (repository *secretRepository) GetSecrets() ([]*models.Confession, error) {
 
 	return confessions, nil
 }
+
+func (repository *secretRepository) GetSecretsByCategory(categoryName string) ([]*models.Confession, error) {
+	var confessions []*models.Confession
+	result := repository.DB.
+		Joins("JOIN confession_categories ON confession_categories.confession_id = confessions.id JOIN categories on categories.id = confession_categories.category_id ").
+		Where("categories.name = ?", categoryName).
+		Preload("Categories").
+		Order("confessions.created_at desc").
+		Find(&confessions)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	if len(confessions) == 0 {
+		return nil, fmt.Errorf("Category %s not found", categoryName)
+	}
+
+	return confessions, nil
+}

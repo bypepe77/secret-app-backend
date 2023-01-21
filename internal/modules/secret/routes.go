@@ -26,4 +26,5 @@ func (routeController *SecretRoute) RegisterSecretRoutes() {
 	routeController.routeGroup.GET("/like/:SecretID", routeController.ctrl.LikeSecret)
 	routeController.routeGroup.GET("/unlike/:SecretID", routeController.ctrl.UnlikeSecret)
 	routeController.routeGroup.GET("/all", routeController.ctrl.GetSecrets)
+	routeController.routeGroup.GET("/:CategoryName", routeController.ctrl.GetSecretsByCategory)
 }
