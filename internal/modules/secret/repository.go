@@ -3,6 +3,7 @@ package secret
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/bypepe77/secret-app-backend/internal/models"
 	"gorm.io/gorm"
@@ -109,4 +110,19 @@ func (repository *secretRepository) DeleteLikeFromConfession(confessionID int, u
 		return result.Error
 	}
 	return nil
+}
+
+func (repository *secretRepository) GetSecrets() ([]*models.Confession, error) {
+	var confessions []*models.Confession
+	result := repository.DB.
+		Where("created_at >= ?", time.Now().Add(-48*time.Hour)).
+		Preload("Categories").
+		Order("likes_count desc").
+		Find(&confessions)
+
+	if result.Error != nil {
+		return nil, errors.New("Error listing secrets")
+	}
+
+	return confessions, nil
 }
