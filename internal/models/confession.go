@@ -7,7 +7,7 @@ import (
 type Confession struct {
 	gorm.Model
 	Content     string
-	IsDestroyed bool `gorm:"default:true"`
+	IsDestroyed bool `gorm:"default:false"`
 	User        *User
 	UserID      int         `gorm:"foreignkey:UserID"`
 	Categories  []*Category `gorm:"many2many:confession_categories;"`
